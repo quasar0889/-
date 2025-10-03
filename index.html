@@ -122,7 +122,16 @@ a:hover {
 
       <div class="section-title">TRANSACTIONS</div>
       <ul id="txnList"></ul>
-    </div>
+
+    <!-- 依頼詳細表示エリア -->
+<div id="bountyDetail" style="border:1px solid #33FF33; padding:5px; margin-top:10px; display:none;">
+  <div id="detailTitle" class="green"></div>
+  <div id="detailDescription" class="white"></div>
+  <div id="detailReward" class="green"></div>
+  <div id="detailImage"></div>
+  <div id="detailCountdown" class="white"></div>
+</div>
+</div>
   </section>
 </div>
 
@@ -272,6 +281,58 @@ el('btnCreate').addEventListener('click', async ()=>{
   try{ await api('/bounties',{method:'POST', body:{title,description:desc,reward}}); el('title').value=''; el('description').value=''; el('reward').value=''; loadBounties(); loadMe(); }
   catch(e){ alert(e.error || 'Failed'); }
 });
+// 詳細表示要素
+const bountyDetail = el('bountyDetail');
+const detailTitle = el('detailTitle');
+const detailDescription = el('detailDescription');
+const detailReward = el('detailReward');
+const detailImage = el('detailImage');
+const detailCountdown = el('detailCountdown');
+
+let countdownInterval = null;
+
+function showBountyDetail(b) {
+  detailTitle.textContent = b.title;
+  detailDescription.textContent = b.description;
+  detailReward.textContent = `報酬: ${b.reward} pt`;
+  
+  if(b.attachment_url) {
+    detailImage.innerHTML = `<img src="${b.attachment_url}" alt="attachment" style="max-width:100%;">`;
+  } else {
+    detailImage.innerHTML = '';
+  }
+  
+  // 残り時間カウントダウン
+  if(countdownInterval) clearInterval(countdownInterval);
+  function updateCountdown() {
+    const now = new Date();
+    const end = new Date(b.deadline); // deadlineはサーバーからISO文字列で取得
+    let diff = Math.floor((end - now) / 1000); // 秒
+    if(diff < 0) diff = 0;
+    const h = String(Math.floor(diff/3600)).padStart(2,'0');
+    const m = String(Math.floor((diff%3600)/60)).padStart(2,'0');
+    const s = String(diff%60).padStart(2,'0');
+    detailCountdown.textContent = `残り時間: ${h}:${m}:${s}`;
+  }
+  updateCountdown();
+  countdownInterval = setInterval(updateCountdown,1000);
+  
+  bountyDetail.style.display = 'block';
+}
+
+// bountyListの各liクリックで詳細表示
+function createBountyLi(b) {
+  const li = document.createElement('li');
+  li.innerHTML = `#<span class="green">${b.id}</span> [${b.status}] <span class="green">${b.title}</span> (<span class="green">${b.reward}</span>pt) by <span class="white">${b.created_by_name}</span>`;
+  
+  li.style.cursor = 'pointer';
+  li.onclick = ()=>showBountyDetail(b);
+
+  return li;
+}
+
+// loadBounties内でliを作成する部分を
+// bountyListEl.appendChild(createBountyLi(b));
 
 // ==================== INIT ====================
 loadMe(); loadBounties();
