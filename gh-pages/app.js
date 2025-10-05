@@ -1,4 +1,4 @@
-const API_URL = "https://your-render-app.onrender.com"; // ← RenderのURLに変更
+const API_URL = "https://7bnxwc3rf1.onrender.com"; // ← RenderのURLに変更
 const socket = io(API_URL);
 
 socket.on("connect", () => console.log("🔌 connected to server"));
