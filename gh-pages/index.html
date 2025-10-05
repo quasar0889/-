@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>BOUNTY TERMINAL</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1 class="green">BOUNTY TERMINAL</h1>
+
+  <div class="section">
+    <h2 class="green">依頼一覧（リアルタイム更新）</h2>
+    <ul id="bountyList"></ul>
+  </div>
+
+  <div class="section">
+    <h2 class="green">新しい依頼を作成</h2>
+    <input id="title" placeholder="タイトル"><br>
+    <textarea id="description" placeholder="説明"></textarea><br>
+    <input id="reward" type="number" placeholder="報酬（pt）"><br>
+    <input id="image_url" placeholder="画像URL"><br>
+    <input id="deadline" type="datetime-local"><br>
+    <button id="btnCreate">作成</button>
+  </div>
+
+  <div id="detailBox" style="display:none;"></div>
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
